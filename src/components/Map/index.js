@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import { StyleSheet } from 'react-native';
-import Axios from 'axios'
+import { getAddressByCoordinates, getCoordinatesByAddress } from '../../services/geoServices'
 
 
 const Map = (props) => {
@@ -12,26 +12,24 @@ const Map = (props) => {
   })
 
   useEffect(() => {
-    if (props.address != null) {
-
-      Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${props.address}&key=AIzaSyBYEECqPIORcLEuBpntcS-A9WVrFTOE23k`)
-        .then((response) => {
-          if (response.status == 200) {
-            setCordinates({
-              latitude: response.data.results[0].geometry.location.lat,
-              longitude: response.data.results[0].geometry.location.lng
-            });
-          }
-        })
+    const getCordinates = async () => {
+      if (props.address != null && props.address.length > 20) {
+        let cordinates = await getCoordinatesByAddress(props.address);
+        setCordinates({
+          latitude: cordinates.latitude,
+          longitude: cordinates.longitude
+        });
+      }
     }
+    getCordinates();
   }, [props.address])
 
-  const getAddrees = (coordinate) => {
+  const getAddrees = async (coordinate) => {
     setCordinates(coordinate)
-    Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinate.latitude},${coordinate.longitude}&key=AIzaSyBYEECqPIORcLEuBpntcS-A9WVrFTOE23k`)
-      .then((response) => {
-        props.setAddress(response.data.results[0].formatted_address)
-      })
+    let address = await getAddressByCoordinates(coordinate.latitude, coordinate.longitude)
+    if (address != null) {
+      props.setAddress(address)
+    }
   }
 
   return (
