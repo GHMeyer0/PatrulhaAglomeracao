@@ -1,27 +1,32 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
+import { StyleSheet, View} from 'react-native';
+import Map from '../components/Map'
+import { TextInput , Button } from 'react-native-paper';
 
 const Main = () => {
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      padding: 20,
       backgroundColor: '#fff',
-      alignItems: 'center',
       justifyContent: 'center',
-      padding: 10,
     },
-    mapStyle: {
-      width: '90%',
-      height: '60%',
+    textInput: {
+      marginBottom: 30
     },
+    buttom: {
+      height: 60,
+      justifyContent: 'center',
+    }
   });
   
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <MapView style={styles.mapStyle}></MapView>
+      <TextInput  label='Endereço' />
+      <Map/>
+      <TextInput  label='Numero de pessoas' style={styles.textInput}/>
+      <Button onPress={() => alert()} mode="contained" style={styles.buttom}> Notificar autoridade </Button>
     </View>
   )
 }
