@@ -1,36 +1,50 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Text} from 'react-native';
-import Map from '../components/Map'
-import RoundPicture from '../components/RoundPicture'
-import { TextInput , Button, Dialog } from 'react-native-paper';
+import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
+import Map from '../components/Map';
+import Modal from '../components/Modal';
+import RoundPicture from '../components/RoundPicture';
+import { getAddressByCoordinates } from '../services/geoServices';
+
 
 const Main = () => {
   const [address, setAddress] = useState(null);
   const [modalVisible, setModalVisible] = useState(false)
-  
+  useEffect(() => {
+    const getPermissions = async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+      }
+    }
+    getPermissions();
+  })
+  const getLocationFromGPS = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setAddress(await getAddressByCoordinates(location.coords.latitude, location.coords.longitude ));
+    setModalVisible(false);
+  }
+
+
   return (
-    <View style={styles.container}>
-      <RoundPicture/>
-      <TextInput  label='Endereço' style={styles.textInput} value={address} onFocus={() => {setModalVisible(true)}} onChangeText={text => setAddress(text)}/>
-      <Map address={address} setAddress={setAddress} />
-      <TextInput  label='Numero de pessoas' style={styles.textInput}/>
-      <Button onPress={() => alert()} mode="contained" style={styles.buttom}> Notificar autoridade </Button>
-
-      <Dialog
+    <>
+      <View style={styles.container}>
+        <RoundPicture />
+        <TextInput label='Endereço' style={styles.textInput} value={address} onFocus={() => { setModalVisible(true) }} onChangeText={text => setAddress(text)} />
+        <Map address={address} setAddress={setAddress} />
+        <TextInput label='Numero de pessoas' style={styles.textInput} />
+        <Button onPress={() => alert()} mode="contained" style={styles.buttom}> Notificar autoridade </Button>
+      </View>
+      <Modal
         visible={modalVisible}
-        onDismiss={() => setModalVisible(false)}
-      >
-        <Dialog.Title>Atenção</Dialog.Title>
-          <Dialog.Content>
-            <Text>Voce deseja pegar a sua localização atual?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setModalVisible(false)}>Sim</Button>
-            <Button onPress={() => setModalVisible(false)}>Não</Button>
-          </Dialog.Actions>
-
-      </Dialog>
-    </View>
+        yesAction={() => getLocationFromGPS()}
+        onClose={() => setModalVisible(false)}
+        title="Obter Localização"
+        content="Deseja obter a localização atual?"
+        
+      />
+    </>
   )
 }
 

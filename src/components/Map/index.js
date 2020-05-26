@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { getAddressByCoordinates, getCoordinatesByAddress } from '../../services/geoServices'
+import MapView, { Marker } from 'react-native-maps';
+import { getAddressByCoordinates, getCoordinatesByAddress } from '../../services/geoServices';
 
 
 const Map = (props) => {
