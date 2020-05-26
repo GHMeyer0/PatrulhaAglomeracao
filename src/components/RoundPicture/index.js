@@ -1,7 +1,8 @@
 import React from 'react'
 import { StyleSheet, Image,TouchableOpacity, View} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
-const RoundPicture = () => {
+const RoundPicture = (props) => {
   const styles = StyleSheet.create({
     container: {
       margin: 10,
@@ -17,15 +18,30 @@ const RoundPicture = () => {
       borderColor: 'black'
     }
   });
+
+  const changeImage = async () => {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true
+      });
+      if (!result.cancelled) {
+        props.handleChange('image',result.uri)
+      }
+    
+  }
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity
-          onPress={() => alert()}
+          onPress={() => changeImage()}
       >
         <Image
           style={styles.image}
           source={{
-            uri: 'https://png.pngtree.com/png-clipart/20190520/original/pngtree-vector-camera-icon-png-image_4015139.jpg',
+            uri: props.image,
           }}
         />
       </TouchableOpacity>

@@ -5,29 +5,33 @@ import { getAddressByCoordinates, getCoordinatesByAddress } from '../../services
 
 
 const Map = (props) => {
-  const [cordinates, setCordinates] = useState({
+  const [coordinates, setCoordinates] = useState({
     latitude: 0,
     longitude: 0
   })
 
   useEffect(() => {
-    const getCordinates = async () => {
-      if (props.address != null && props.address.length > 20) {
-        let cordinates = await getCoordinatesByAddress(props.address);
-        setCordinates({
-          latitude: cordinates.latitude,
-          longitude: cordinates.longitude
+    const getCoordinates = async () => {
+      if (props.complaint.address != null && props.complaint.address.length > 20) {
+        let coordinate = await getCoordinatesByAddress(props.complaint.address);
+        props.handleChange('latitude',coordinate.latitude)
+        props.handleChange('longitude',coordinate.longitude)
+        setCoordinates({
+          latitude: coordinate.latitude,
+          longitude: coordinate.longitude
         });
       }
     }
-    getCordinates();
-  }, [props.address])
+    getCoordinates();
+  }, [props.complaint.address])
 
   const getAddrees = async (coordinate) => {
-    setCordinates(coordinate)
+    props.handleChange('latitude',coordinate.latitude)
+    props.handleChange('longitude',coordinate.longitude)
+    setCoordinates(coordinate)
     let address = await getAddressByCoordinates(coordinate.latitude, coordinate.longitude)
     if (address != null) {
-      props.setAddress(address)
+      props.handleChange('address',address)
     }
   }
 
@@ -35,7 +39,7 @@ const Map = (props) => {
     <>
       <MapView style={styles.mapStyle} onPress={e => getAddrees(e.nativeEvent.coordinate)}>
         <Marker draggable
-          coordinate={cordinates}
+          coordinate={coordinates}
         />
       </MapView>
     </>
