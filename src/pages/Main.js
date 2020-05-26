@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View} from 'react-native';
 import Map from '../components/Map'
+import RoundPicture from '../components/RoundPicture'
 import { TextInput , Button } from 'react-native-paper';
 
 const Main = () => {
@@ -13,7 +14,7 @@ const Main = () => {
       justifyContent: 'center',
     },
     textInput: {
-      marginBottom: 30
+      margin: 20
     },
     buttom: {
       height: 60,
@@ -23,7 +24,8 @@ const Main = () => {
   
   return (
     <View style={styles.container}>
-      <TextInput  label='Endereço' />
+      <RoundPicture/>
+      <TextInput  label='Endereço' style={styles.textInput} />
       <Map/>
       <TextInput  label='Numero de pessoas' style={styles.textInput}/>
       <Button onPress={() => alert()} mode="contained" style={styles.buttom}> Notificar autoridade </Button>
